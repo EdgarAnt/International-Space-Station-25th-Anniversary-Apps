@@ -199,9 +199,16 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 	} else {
 		setStatusMode('progress');
-		engine.init('ksp')
-			.then(() => engine.preloadFile('https://raw.githubusercontent.com/EdgarAnt/International-Space-Station-25th-Anniversary-Apps/gh-pages/project/ksp.pck', 'ksp.pck'))
-			.then(() => engine.start({
+		console.log('[Godot] Iniciando motor...');
+	engine.init('ksp')
+		.then(() => {
+			const pckUrl = 'https://media.githubusercontent.com/media/EdgarAnt/International-Space-Station-25th-Anniversary-Apps/gh-pages/project/ksp.pck';
+			console.log('[Godot] Precargando PCK desde', pckUrl);
+			return engine.preloadFile(pckUrl, 'ksp.pck');
+		})
+		.then(() => {
+			console.log('[Godot] Arrancando con --main-pack ksp.pck');
+			return engine.start({
 				'args': ['--main-pack', 'ksp.pck'],
 				'onProgress': function (current, total) {
 					if (current > 0 && total > 0) {
@@ -212,10 +219,12 @@ const engine = new Engine(GODOT_CONFIG);
 						statusProgress.removeAttribute('max');
 					}
 				},
-			}))
-			.then(() => {
-				setStatusMode('hidden');
-			}, displayFailureNotice);
+			});
+		})
+		.then(() => {
+			console.log('[Godot] Juego iniciado, ocultando barra');
+			setStatusMode('hidden');
+		}, displayFailureNotice);
 	}
 }());
 		</script>
